@@ -1,6 +1,7 @@
 import pyautogui
 from PIL import Image
 from enum import Enum
+import math
 
 #width and height of the tetris board
 WIDTH = 260
@@ -9,11 +10,11 @@ HEIGHT = 525
 #colors of each tetris piece
 class tetromino(Enum):
     I = (74, 163, 180, 255)
-    O = (138, 131, 53, 255)
+    O = (122, 111, 37, 255)
     T = (112, 39, 135, 255)
     S = (69, 137, 72, 255)
     Z = (128, 42, 37, 255)
-    L = (134, 106, 47, 255)
+    L = (134, 89, 28, 255)
     J = (49, 89, 136, 255)
 
 #initalise variables/arrays
@@ -34,6 +35,24 @@ def capture_screenshot():
     hold_image = screenshot.crop((60, 104, 61, 105))
     hold_image.save('hold.png')
 
+def euclidean_distance(color1, color2):
+    return math.sqrt(sum((c1 - c2) ** 2 for c1, c2 in zip(color1, color2)))
+
+def find_closest_color(target_color, tolerance=100):
+    closest_piece = None
+    min_distance = float('inf')
+    
+    for piece in tetromino:
+        distance = euclidean_distance(piece.value, target_color)
+        if distance < min_distance:
+            min_distance = distance
+            closest_piece = piece
+    
+    if min_distance <= tolerance:
+        return closest_piece.name
+    else:
+        return 'Unknown'
+
 def analyze_board(WIDTH, HEIGHT):
     cell_width = WIDTH // 10
     cell_height = HEIGHT // 20
@@ -53,10 +72,10 @@ def analyze_board(WIDTH, HEIGHT):
     #identify hold piece and store in a variable
     with Image.open('hold.png') as hold_image:
         colour = hold_image.getpixel((0,0))
-        hold = tetromino(colour).name
+        hold = find_closest_color(colour)
     return hold
 
-#screenshot = capture_screenshot()
+screenshot = capture_screenshot()
 
 hold = analyze_board(WIDTH, HEIGHT)
 
