@@ -10,7 +10,7 @@ HEIGHT = 525
 #colors of each tetris piece
 class tetromino(Enum):
     I = (74, 163, 180, 255)
-    O = (122, 111, 37, 255)
+    O = (174, 162, 51, 255)
     T = (112, 39, 135, 255)
     S = (69, 137, 72, 255)
     Z = (128, 42, 37, 255)
@@ -35,10 +35,11 @@ def capture_screenshot():
     hold_image = screenshot.crop((60, 104, 61, 105))
     hold_image.save('hold.png')
 
+
 def euclidean_distance(color1, color2):
     return math.sqrt(sum((c1 - c2) ** 2 for c1, c2 in zip(color1, color2)))
 
-def find_closest_color(target_color, tolerance=100):
+def find_closest_color(target_color, tolerance=75):
     closest_piece = None
     min_distance = float('inf')
     
@@ -73,6 +74,8 @@ def analyze_board(WIDTH, HEIGHT):
     with Image.open('hold.png') as hold_image:
         colour = hold_image.getpixel((0,0))
         hold = find_closest_color(colour)
+
+    #identify pieces in the queue
     return hold
 
 screenshot = capture_screenshot()
