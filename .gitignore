@@ -1,8 +1,10 @@
 .DS_Store
 .png
+__pycache__
 
 #venv files
 venv/
 
 #image files
+Image/
 *.png

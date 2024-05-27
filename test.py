@@ -2,8 +2,7 @@
 import pyautogui
 from PIL import Image
 from enum import Enum
-
-Queue_Size = 3
+import math
 
 class tetromino(Enum):
     I = (74, 163, 180, 255)
@@ -14,16 +13,48 @@ class tetromino(Enum):
     L = (134, 89, 28, 255)
     J = (49, 89, 136, 255)
 
+def euclidean_distance(color1, color2):
+    return math.sqrt(sum((c1 - c2) ** 2 for c1, c2 in zip(color1, color2)))
+
+def find_closest_color(target_color, tolerance=75):
+    closest_piece = None
+    min_distance = float('inf')
+    
+    for piece in tetromino:
+        distance = euclidean_distance(piece.value, target_color)
+        if distance < min_distance:
+            min_distance = distance
+            closest_piece = piece
+    
+    if min_distance <= tolerance:
+        return closest_piece.name
+    else:
+        return 'Unknown'
+
+#(550, 74, 591, 263)
 with Image.open('screenshot.png') as screenshot:
-    queue_image = screenshot.crop((550, 77, 591, 263))
-    queue_image.save('queue.png')
+    queue1 = screenshot.crop((575, 74, 576, 137))
+    queue1.save('Image/queue1.png')
+    queue2 = screenshot.crop((575, 137, 576, 200))
+    queue2.save('Image/queue2.png')
+    queue3 = screenshot.crop((575, 200, 576, 263))
+    queue3.save('Image/queue3.png')
 
-with Image.open('queue.png') as queue_image:
-    x = 20 
-    rootname = 'test'
-    for i in range(3):
-        y = (62*i) + 35
-        filename = 'test'  + str(i+1) + ".png"
+def test(ImgPath):
+    with Image.open(ImgPath) as Img:
+        for y in range(63):
+            if Img.getpixel((0,y)) != (36,36,36,255):
+                colour = Img.getpixel((0, y + 10))
+                return(find_closest_color(colour))
+                break
 
-        thisImage = queue_image.crop((x, y, x+1, y+1))
-        thisImage.save(filename)
+queue = []
+queue.append(test('Image/queue1.png'))
+queue.append(test('Image/queue2.png'))
+queue.append(test('Image/queue3.png'))
+
+print(queue)
+
+
+
+

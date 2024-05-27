@@ -35,6 +35,13 @@ def capture_screenshot():
     hold_image = screenshot.crop((60, 104, 61, 105))
     hold_image.save('hold.png')
 
+    queue1 = screenshot.crop((575, 74, 576, 137))
+    queue1.save('Image/queue1.png')
+    queue2 = screenshot.crop((575, 137, 576, 200))
+    queue2.save('Image/queue2.png')
+    queue3 = screenshot.crop((575, 200, 576, 263))
+    queue3.save('Image/queue3.png')
+
 
 def euclidean_distance(color1, color2):
     return math.sqrt(sum((c1 - c2) ** 2 for c1, c2 in zip(color1, color2)))
@@ -53,6 +60,14 @@ def find_closest_color(target_color, tolerance=75):
         return closest_piece.name
     else:
         return 'Unknown'
+    
+def get_queue_piece(ImgPath):
+    with Image.open(ImgPath) as Img:
+        for y in range(63):
+            if Img.getpixel((0,y)) != (36,36,36,255):
+                colour = Img.getpixel((0, y + 10))
+                return(find_closest_color(colour))
+                break
 
 def analyze_board(WIDTH, HEIGHT):
     cell_width = WIDTH // 10
@@ -76,6 +91,10 @@ def analyze_board(WIDTH, HEIGHT):
         hold = find_closest_color(colour)
 
     #identify pieces in the queue
+    queue.append(get_queue_piece('Image/queue1.png'))
+    queue.append(get_queue_piece('Image/queue2.png'))
+    queue.append(get_queue_piece('Image/queue3.png'))
+
     return hold
 
 screenshot = capture_screenshot()
@@ -92,3 +111,4 @@ for i in range(20):
     print("")
 
 print(f"\nhold piece : {hold}")
+print(f"queue : {queue}")
