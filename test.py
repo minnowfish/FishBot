@@ -1,4 +1,4 @@
-# CURRENT TEST : Getting queue 
+# CURRENT TEST : Get current piece
 import pyautogui
 from PIL import Image
 from enum import Enum
@@ -31,30 +31,33 @@ def find_closest_color(target_color, tolerance=75):
     else:
         return 'Unknown'
 
-#(550, 74, 591, 263)
-with Image.open('screenshot.png') as screenshot:
-    queue1 = screenshot.crop((575, 74, 576, 137))
-    queue1.save('Image/queue1.png')
-    queue2 = screenshot.crop((575, 137, 576, 200))
-    queue2.save('Image/queue2.png')
-    queue3 = screenshot.crop((575, 200, 576, 263))
-    queue3.save('Image/queue3.png')
-
-def test(ImgPath):
-    with Image.open(ImgPath) as Img:
-        for y in range(63):
-            if Img.getpixel((0,y)) != (36,36,36,255):
-                colour = Img.getpixel((0, y + 10))
-                return(find_closest_color(colour))
-                break
-
+board = [['' for _ in range(10)] for _ in range(20)]
+hold = ''
 queue = []
-queue.append(test('Image/queue1.png'))
-queue.append(test('Image/queue2.png'))
-queue.append(test('Image/queue3.png'))
 
-print(queue)
+WIDTH = 260
+HEIGHT = 525
 
+cell_width = WIDTH // 10
+cell_height = HEIGHT // 20
 
+first = True 
+
+#store board state in an array
+with Image.open('board_state.png') as board_state:
+    for row in range(20):
+        y = (cell_height * row) + cell_height//2
+        for col in range(10):
+            x = (cell_width * col) + cell_width//2
+            colour = board_state.getpixel((x,y))
+            if colour != (0,0,0,255):
+                board[row][col] = 1
+                if first == True:
+                    current_piece = find_closest_color(board_state.getpixel((x,y+5)))
+                    first = False
+            else: 
+                board[row][col] = 0
+
+print(current_piece)
 
 

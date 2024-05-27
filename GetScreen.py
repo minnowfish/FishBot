@@ -21,6 +21,7 @@ class tetromino(Enum):
 board = [['' for _ in range(10)] for _ in range(20)]
 hold = ''
 queue = []
+first = True
 
 def capture_screenshot():
     #get the screenshot of the current state of the game
@@ -69,7 +70,7 @@ def get_queue_piece(ImgPath):
                 return(find_closest_color(colour))
                 break
 
-def analyze_board(WIDTH, HEIGHT):
+def analyze_board(WIDTH, HEIGHT, first):
     cell_width = WIDTH // 10
     cell_height = HEIGHT // 20
 
@@ -82,6 +83,9 @@ def analyze_board(WIDTH, HEIGHT):
                 colour = board_state.getpixel((x,y))
                 if colour != (0,0,0,255):
                     board[row][col] = 1
+                    if first == True:
+                        current_piece = find_closest_color(board_state.getpixel((x,y+5)))
+                        first = False
                 else: 
                     board[row][col] = 0
     
@@ -95,11 +99,11 @@ def analyze_board(WIDTH, HEIGHT):
     queue.append(get_queue_piece('Image/queue2.png'))
     queue.append(get_queue_piece('Image/queue3.png'))
 
-    return hold
+    return hold, current_piece, first
 
 screenshot = capture_screenshot()
 
-hold = analyze_board(WIDTH, HEIGHT)
+hold , current_piece, first= analyze_board(WIDTH, HEIGHT, first)
 
 #to be removed
 for i in range(20):
@@ -112,3 +116,4 @@ for i in range(20):
 
 print(f"\nhold piece : {hold}")
 print(f"queue : {queue}")
+print(f"current piece : {current_piece}")
