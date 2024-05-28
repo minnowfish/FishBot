@@ -22,19 +22,20 @@ board = [['' for _ in range(10)] for _ in range(20)]
 hold = ''
 queue = []
 first = True
+current_piece = ''
 
 def capture_screenshot():
     #get the screenshot of the current state of the game
     screenshot = pyautogui.screenshot(region=(425, 190, 630, HEIGHT))
-    screenshot.save('screenshot.png')
+    screenshot.save('Image/screenshot.png')
 
     #get tetris board
     board_state = screenshot.crop((180, 0, 440, 525))
-    board_state.save('board_state.png')
+    board_state.save('Image/board_state.png')
 
     #get queue and hold piece
     hold_image = screenshot.crop((60, 104, 61, 105))
-    hold_image.save('hold.png')
+    hold_image.save('Image/hold.png')
 
     queue1 = screenshot.crop((575, 74, 576, 137))
     queue1.save('Image/queue1.png')
@@ -70,12 +71,34 @@ def get_queue_piece(ImgPath):
                 return(find_closest_color(colour))
                 break
 
-def analyze_board(WIDTH, HEIGHT, first):
+def analyze_board(WIDTH, HEIGHT, first, hold, current_piece):
+    global queue
     cell_width = WIDTH // 10
     cell_height = HEIGHT // 20
+    new_queue = []
 
-    #store board state in an array
-    with Image.open('board_state.png') as board_state:
+    #identify hold piece and store in a variable
+    with Image.open('Image/hold.png') as hold_image:
+        colour = hold_image.getpixel((0,0))
+        new_hold = find_closest_color(colour)
+
+    #identify pieces in the queue
+    new_queue.append(get_queue_piece('Image/queue1.png'))
+    new_queue.append(get_queue_piece('Image/queue2.png'))
+    new_queue.append(get_queue_piece('Image/queue3.png'))
+
+    if first == False:
+        if new_queue != queue:
+            current_piece = queue[0]
+        elif new_hold != hold and hold != "Unknown":
+            current_piece = hold
+        else:
+            current_piece = current_piece
+    
+    queue = new_queue
+
+    #store board state in an array and get current piece
+    with Image.open('Image/board_state.png') as board_state:
         for row in range(20):
             y = (cell_height * row) + cell_height//2
             for col in range(10):
@@ -88,32 +111,23 @@ def analyze_board(WIDTH, HEIGHT, first):
                         first = False
                 else: 
                     board[row][col] = 0
-    
-    #identify hold piece and store in a variable
-    with Image.open('hold.png') as hold_image:
-        colour = hold_image.getpixel((0,0))
-        hold = find_closest_color(colour)
 
-    #identify pieces in the queue
-    queue.append(get_queue_piece('Image/queue1.png'))
-    queue.append(get_queue_piece('Image/queue2.png'))
-    queue.append(get_queue_piece('Image/queue3.png'))
+    return new_hold, current_piece, first
 
-    return hold, current_piece, first
+while True:
+    screenshot = capture_screenshot()
 
-screenshot = capture_screenshot()
+    hold , current_piece, first= analyze_board(WIDTH, HEIGHT, first, hold, current_piece)
 
-hold , current_piece, first= analyze_board(WIDTH, HEIGHT, first)
+    #to be removed
+    for i in range(20):
+        for j in range(10):
+            if board[i][j] == 0:
+                print("  ", end = "")
+            else:
+                print("[]", end = "")
+        print("")
 
-#to be removed
-for i in range(20):
-    for j in range(10):
-        if board[i][j] == 0:
-            print("  ", end = "")
-        else:
-            print("[]", end = "")
-    print("")
-
-print(f"\nhold piece : {hold}")
-print(f"queue : {queue}")
-print(f"current piece : {current_piece}")
+    print(f"\nhold piece : {hold}")
+    print(f"queue : {queue}")
+    print(f"current piece : {current_piece}")
