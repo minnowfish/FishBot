@@ -1,3 +1,5 @@
+# use for getting game state on https://tetris.com/play-tetris
+
 import pyautogui
 from PIL import Image
 from enum import Enum
