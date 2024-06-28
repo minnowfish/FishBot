@@ -7,9 +7,8 @@ class Tetris:
         self.screen_width = 600
         self.screen_height = 900
         pygame.init()
-        self.clock = pygame.time.Clock
+        self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((self.screen_width , self.screen_height))
-        self.scene = None
         self.start_game()
 
     def run(self):
@@ -21,16 +20,16 @@ class Tetris:
                     pygame.quit()
                     sys.exit()
 
-            self.scene.update(events)
+            self.game.update(events)
 
             self.screen.fill("black")
-            self.scene.draw()
+            self.game.draw()
             pygame.display.flip()
 
             self.clock.tick(60)
 
     def start_game(self):
-        self.scene =  Game(self, self.screen)
+        self.game =  Game(self, self.screen)
 
 if __name__ == '__main__':
     tetris = Tetris()
