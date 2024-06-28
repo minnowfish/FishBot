@@ -59,3 +59,21 @@ class Board:
         for offset in piece_rotation:
             off_x, off_y = offset
             self.grid[current_piece.y - off_y + 1][current_piece.x + off_x - 1] = current_piece.piece + 1
+
+#line clears
+    def clear_lines(self):
+        lines_cleared = 0
+        for row in range(len(self.grid)-1, -1, -1):
+            line = self.grid[row]
+            if self.check_full_line(line):
+                self.grid.pop(row)
+                lines_cleared += 1
+
+        for i in range(lines_cleared):
+            self.grid.insert(0, [0 for _ in range(self.vertical_lines)])
+
+    def check_full_line(self, line):
+        for i in line:
+            if i == 0:
+                return False
+        return True

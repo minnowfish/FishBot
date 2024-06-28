@@ -93,6 +93,7 @@ class Game:
         if self.current_piece.locked:
             self.board.add_piece(self.current_piece)
             self.current_piece = self.get_next()
+            self.board.clear_lines()
             self.last_movement = pygame.time.get_ticks()
 
 
@@ -121,5 +122,6 @@ class Game:
     def get_next(self):
         self.queue.append(self.get_queue())
         return self.queue.pop(0)
+
 
 
