@@ -21,6 +21,7 @@ class Game:
         self.bag = generate_new_bag(self.screen, self.board)
         self.queue = [self.get_queue() for _ in range(4)]
         self.current_piece = self.get_next()
+        self.hold_piece = None
 
         #DAS and Key press
         self.last_movement = pygame.time.get_ticks()
@@ -32,17 +33,19 @@ class Game:
         self.right_pressed_tick = 0
 
         self.soft_drop = False
+        self.piece_held = False
 
     def draw(self):
         self.board.draw()
         self.board.draw_piece(self.current_piece)
+        self.board.draw_hold(self.hold_piece)
 
     def update(self, events):
         for event in events:
             # TODO : define the functions for each event 
             if event.type == pygame.KEYDOWN:
                 if event.key == Controls.hold:
-                    pass
+                    self.hold()
                 elif event.key == Controls.rotate_cw:
                     self.rotate_cw()
                 elif event.key == Controls.rotate_ccw:
@@ -95,6 +98,7 @@ class Game:
             self.current_piece = self.get_next()
             self.board.clear_lines()
             self.last_movement = pygame.time.get_ticks()
+            self.piece_held = False
 
 
         #gravity
@@ -122,6 +126,17 @@ class Game:
     def get_next(self):
         self.queue.append(self.get_queue())
         return self.queue.pop(0)
+    
+    def hold(self):
+        if self.piece_held == False:
+            if self.hold_piece == None:
+                self.hold_piece = self.current_piece
+                self.current_piece = self.get_next()
+            else:
+                self.current_piece, self.hold_piece = self.hold_piece, self.current_piece
+            self.hold_piece.reset()
+            self.piece_held = True
+            
 
 
 

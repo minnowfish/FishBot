@@ -11,7 +11,6 @@ class Piece_Type(Enum):
     PieceZ = 4
     PieceL = 5
     PieceJ = 6
-    PieceNone = 7
 
 
 Piece_Color = {
@@ -48,6 +47,15 @@ class Tetris_Piece:
             real_x = (self.x + off_x - 1) * self.cell_size + board_x
             real_y = (self.y - off_y + 2) * self.cell_size + board_y
             rect = pygame.Rect(real_x + 1, real_y, self.cell_size, self.cell_size)
+            pygame.draw.rect(self.screen, self.color, rect)
+
+    def draw_other_piece(self, x, y):
+        self.piece_rotation = self.piece_rotations[self.current_rotation]
+        for offset in self.piece_rotation:
+            off_x, off_y = offset
+            real_x = (off_x + 1) * self.cell_size + x
+            real_y = (-off_y + 2) * self.cell_size + y
+            rect = pygame.Rect(real_x, real_y, self.cell_size, self.cell_size)
             pygame.draw.rect(self.screen, self.color, rect)
 
     # movements of the piece
@@ -99,6 +107,12 @@ class Tetris_Piece:
             except IndexError:
                 return False
         return True
+    
+    #hold piece handling
+    def reset(self):
+        self.x = 5
+        self.y = -2
+        self.current_rotation = 0
 
     '''def __str__(self):
         return(f"Piece Type: {self.type} \nPiece Color: {self.color} \n Piece Rotations : {self.piece_rotations}")'''

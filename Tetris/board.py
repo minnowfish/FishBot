@@ -16,8 +16,6 @@ class Board:
         self.grid_height = self.horizontal_lines * self.cell_size
         self.grid_color = Color((125, 125, 125))
         self.grid = [[0 for _ in range(self.vertical_lines)] for _ in range(self.horizontal_lines + 1)]
-        
-
 
     def draw(self):
         self.draw_board()
@@ -44,7 +42,7 @@ class Board:
         self.current_piece = current_piece
         self.current_piece.draw_current_piece(self.x, self.y)
 
-    #handle piece on the board
+
     def draw_blocks(self):
         for _y in range(len(self.grid)):
             for _x in range(len(self.grid[0])):
@@ -53,6 +51,18 @@ class Board:
                     real_y = (_y - 1)* self.cell_size + self.y
                     rect = pygame.Rect(real_x, real_y, self.cell_size, self.cell_size)
                     pygame.draw.rect(self.screen, Piece_Color[self.grid[_y][_x] - 1], rect)
+
+    def draw_hold(self, hold_block):
+        self.hold_block = hold_block
+        x, y = 4, 84
+        box = pygame.Rect(x, y, 136, 128)
+        pygame.draw.rect(self.screen, pygame.Color("white"), box, width=2)
+
+        if self.hold_block != None:
+            if self.hold_block.piece == 0 or self.hold_block.piece == 2:
+                self.hold_block.draw_other_piece(x+5, y)
+            else:
+                self.hold_block.draw_other_piece(x+21, y)
 
     def add_piece(self, current_piece):
         piece_rotation = current_piece.piece_rotations[current_piece.current_rotation]
