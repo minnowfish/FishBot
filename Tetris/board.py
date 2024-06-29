@@ -15,7 +15,7 @@ class Board:
         self.grid_width = self.vertical_lines * self.cell_size
         self.grid_height = self.horizontal_lines * self.cell_size
         self.grid_color = Color((125, 125, 125))
-        self.grid = [[0 for _ in range(self.vertical_lines)] for _ in range(self.horizontal_lines)]
+        self.grid = [[0 for _ in range(self.vertical_lines)] for _ in range(self.horizontal_lines + 1)]
         
 
 
@@ -50,7 +50,7 @@ class Board:
             for _x in range(len(self.grid[0])):
                 if self.grid[_y][_x] > 0:
                     real_x = _x * self.cell_size + self.x
-                    real_y = _y * self.cell_size + self.y
+                    real_y = (_y - 1)* self.cell_size + self.y
                     rect = pygame.Rect(real_x, real_y, self.cell_size, self.cell_size)
                     pygame.draw.rect(self.screen, Piece_Color[self.grid[_y][_x] - 1], rect)
 
@@ -58,7 +58,7 @@ class Board:
         piece_rotation = current_piece.piece_rotations[current_piece.current_rotation]
         for offset in piece_rotation:
             off_x, off_y = offset
-            self.grid[current_piece.y - off_y + 1][current_piece.x + off_x - 1] = current_piece.piece + 1
+            self.grid[current_piece.y - off_y + 3][current_piece.x + off_x - 1] = current_piece.piece + 1
 
 #line clears
     def clear_lines(self):

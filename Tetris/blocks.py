@@ -32,7 +32,7 @@ class Tetris_Piece:
         self.board_grid = board.grid
         self.cell_size = self.board.cell_size
         self.x = 5
-        self.y = -1
+        self.y = -2
         self.current_rotation = 0 # initial rotation state
 
         self.piece = piece
@@ -46,7 +46,7 @@ class Tetris_Piece:
         for offset in self.piece_rotation:
             off_x, off_y = offset
             real_x = (self.x + off_x - 1) * self.cell_size + board_x
-            real_y = (self.y - off_y + 1) * self.cell_size + board_y
+            real_y = (self.y - off_y + 2) * self.cell_size + board_y
             rect = pygame.Rect(real_x + 1, real_y, self.cell_size, self.cell_size)
             pygame.draw.rect(self.screen, self.color, rect)
 
@@ -94,7 +94,7 @@ class Tetris_Piece:
         for offset in piece_rotation:
             off_x, off_y = offset
             try:
-                if self.board_grid[y - off_y + 1][x + off_x - 1] != 0 or off_x + x < 1:
+                if self.board_grid[y - off_y + 3][x + off_x - 1] != 0 or off_x + x < 1:
                     return False
             except IndexError:
                 return False
