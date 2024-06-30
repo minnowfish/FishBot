@@ -72,11 +72,15 @@ class Board:
             else:
                 queue[i].draw_other_piece(x + 21, y + i * 128)
 
-    def add_piece(self, current_piece):
+    def add_piece(self, current_piece, next_piece):
         piece_rotation = current_piece.piece_rotations[current_piece.current_rotation]
         for offset in piece_rotation:
             off_x, off_y = offset
             self.grid[current_piece.y - off_y + 3][current_piece.x + off_x - 1] = current_piece.piece + 1
+        
+        if not next_piece.check_move(next_piece.x, next_piece.y, 0):
+            return False
+        return True
 
 #line clears
     def clear_lines(self):

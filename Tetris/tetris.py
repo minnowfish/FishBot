@@ -9,6 +9,7 @@ class Tetris:
         pygame.init()
         self.clock = pygame.time.Clock()
         self.screen = pygame.display.set_mode((self.screen_width , self.screen_height))
+        self.running = True
         self.start_game()
 
     def run(self):
@@ -20,7 +21,8 @@ class Tetris:
                     pygame.quit()
                     sys.exit()
 
-            self.game.update(events)
+            if self.running != False:
+                self.running = self.game.update(events)
 
             self.screen.fill("black")
             self.game.draw()

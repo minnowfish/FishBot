@@ -13,6 +13,7 @@ class Game:
         self.drop_timer = 0
         self.app = app
         self.DAS = 4
+        self.gameover = False
         
         #screen
         self.board = Board(self.screen, x=140, y=20)
@@ -42,6 +43,8 @@ class Game:
         self.board.draw_queue(self.queue)
 
     def update(self, events):
+        if self.gameover == True:
+            return False
         for event in events:
             # TODO : define the functions for each event 
             if event.type == pygame.KEYDOWN:
@@ -95,7 +98,9 @@ class Game:
 
         #locking
         if self.current_piece.locked:
-            self.board.add_piece(self.current_piece)
+            if not self.board.add_piece(self.current_piece, self.queue[0]):
+                self.gameover = True
+                return
             self.current_piece = self.get_next()
             self.board.clear_lines()
             self.last_movement = pygame.time.get_ticks()
