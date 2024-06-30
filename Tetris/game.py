@@ -101,7 +101,6 @@ class Game:
             self.last_movement = pygame.time.get_ticks()
             self.piece_held = False
 
-
         #gravity
         if self.drop_timer >= 1:
             gravity_floor = floor(self.drop_timer)
@@ -137,7 +136,3 @@ class Game:
                 self.current_piece, self.hold_piece = self.hold_piece, self.current_piece
             self.hold_piece.reset()
             self.piece_held = True
-            
-
-
-

@@ -1,6 +1,7 @@
 from enum import Enum
 from random import shuffle
 from define import PIECE_LUT, SRS_LUT
+from numpy import subtract
 import pygame
 
 class Piece_Type(Enum):
@@ -81,15 +82,39 @@ class Tetris_Piece:
             return False
     
     def rotate_cw(self):
-        if self.check_move(self.x, self.y, (self.current_rotation + 1) % 4):
-            self.current_rotation = (self.current_rotation + 1) % 4
-            return True
+        next_rotation = (self.current_rotation + 1) % 4
+        if self.piece != 2:
+            if self.piece == 0:
+                srs_index = 0
+            else:
+                srs_index = 1
+
+            for i in range(5):
+                off_x, off_y = tuple(subtract(SRS_LUT[srs_index][self.current_rotation][i], SRS_LUT[srs_index][next_rotation][i]))
+
+                if self.check_move(self.x + off_x, self.y - off_y, next_rotation):
+                    self.x += off_x
+                    self.y = self.y - off_y
+                    self.current_rotation = next_rotation
+                    return True
         return False
     
     def rotate_ccw(self):
-        if self.check_move(self.x, self.y, (self.current_rotation - 1) % 4):
-            self.current_rotation = (self.current_rotation - 1) % 4
-            return True
+        next_rotation = (self.current_rotation - 1) % 4
+        if self.piece != 2:
+            if self.piece == 0:
+                srs_index = 0
+            else:
+                srs_index = 1
+
+            for i in range(5):
+                off_x, off_y = tuple(subtract(SRS_LUT[srs_index][self.current_rotation][i], SRS_LUT[srs_index][next_rotation][i]))
+
+                if self.check_move(self.x + off_x, self.y - off_y, next_rotation):
+                    self.x += off_x
+                    self.y = self.y - off_y
+                    self.current_rotation = next_rotation
+                    return True
         return False
     
     def hard_drop(self):
@@ -108,7 +133,7 @@ class Tetris_Piece:
             except IndexError:
                 return False
         return True
-    
+                    
     #hold piece handling
     def reset(self):
         self.x = 5
@@ -117,7 +142,6 @@ class Tetris_Piece:
 
     '''def __str__(self):
         return(f"Piece Type: {self.type} \nPiece Color: {self.color} \n Piece Rotations : {self.piece_rotations}")'''
-
 
 def generate_new_bag(screen, board):
     bag = [Tetris_Piece(screen, board, 0),
