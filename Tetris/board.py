@@ -60,9 +60,17 @@ class Board:
 
         if self.hold_block != None:
             if self.hold_block.piece == 0 or self.hold_block.piece == 2:
-                self.hold_block.draw_other_piece(x+5, y)
+                self.hold_block.draw_other_piece(x + 5, y)
             else:
-                self.hold_block.draw_other_piece(x+21, y)
+                self.hold_block.draw_other_piece(x + 21, y)
+
+    def draw_queue(self, queue):
+        x, y = 460, 84
+        for i in range(len(queue)):
+            if queue[i].piece == 0 or queue[i].piece == 2:
+                queue[i].draw_other_piece(x + 5, y + i * 128)
+            else:
+                queue[i].draw_other_piece(x + 21, y + i * 128)
 
     def add_piece(self, current_piece):
         piece_rotation = current_piece.piece_rotations[current_piece.current_rotation]

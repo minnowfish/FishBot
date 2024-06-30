@@ -39,6 +39,7 @@ class Game:
         self.board.draw()
         self.board.draw_piece(self.current_piece)
         self.board.draw_hold(self.hold_piece)
+        self.board.draw_queue(self.queue)
 
     def update(self, events):
         for event in events:
