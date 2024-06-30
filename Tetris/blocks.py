@@ -1,6 +1,6 @@
 from enum import Enum
 from random import shuffle
-from define import PIECE_LUT
+from define import PIECE_LUT, SRS_LUT
 import pygame
 
 class Piece_Type(Enum):
@@ -96,6 +96,7 @@ class Tetris_Piece:
         while self.check_move(self.x, self.y + 1, self.current_rotation):
             self.move_down()
         self.locked = True
+
     #check if move/rotation is possible
     def check_move(self, x, y, rotation):
         piece_rotation = self.piece_rotations[rotation]

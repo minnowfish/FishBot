@@ -26,7 +26,7 @@ class Tetris:
             self.game.draw()
             pygame.display.flip()
 
-            self.clock.tick(60)
+            self.clock.tick(120)
 
     def start_game(self):
         self.game =  Game(self, self.screen)
