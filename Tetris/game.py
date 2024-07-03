@@ -74,6 +74,7 @@ class Game:
                     self.soft_drop = False
 
         if self.left_pressed:
+            self.right_pressed_tick = 0
             if self.left_pressed_tick > self.DAS:
                 while self.current_piece.move_left():
                      self.last_movement = pygame.time.get_ticks()
@@ -83,6 +84,7 @@ class Game:
             self.left_pressed_tick += 1
 
         if self.right_pressed:
+            self.left_pressed_tick = 0
             if self.right_pressed_tick > self.DAS:
                 while self.current_piece.move_right():
                      self.last_movement = pygame.time.get_ticks()
