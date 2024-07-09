@@ -1,9 +1,9 @@
 import pygame
 from math import floor
 from pygame.event import Event
-from define import Controls
-from board import Board
-from blocks import generate_new_bag
+from Tetris.define import Controls
+from Tetris.board import Board
+from Tetris.blocks import generate_new_bag
 
 
 class Game:
@@ -46,7 +46,6 @@ class Game:
         if self.gameover == True:
             return False
         for event in events:
-            # TODO : define the functions for each event 
             if event.type == pygame.KEYDOWN:
                 if event.key == Controls.hold:
                     self.hold()
@@ -73,6 +72,17 @@ class Game:
                 elif event.key == Controls.soft_drop:
                     self.soft_drop = False
 
+        #locking
+        if self.current_piece.locked:
+            if not self.board.add_piece(self.current_piece, self.queue[0]):
+                self.gameover = True
+                print("gameover")
+                return
+            self.current_piece = self.get_next()
+            self.board.clear_lines()
+            self.last_movement = pygame.time.get_ticks()
+            self.piece_held = False
+
         if self.left_pressed:
             self.right_pressed_tick = 0
             if self.left_pressed_tick > self.DAS:
@@ -97,16 +107,6 @@ class Game:
             self.drop_timer += self.gravity * 40
         else:
             self.drop_timer += self.gravity
-
-        #locking
-        if self.current_piece.locked:
-            if not self.board.add_piece(self.current_piece, self.queue[0]):
-                self.gameover = True
-                return
-            self.current_piece = self.get_next()
-            self.board.clear_lines()
-            self.last_movement = pygame.time.get_ticks()
-            self.piece_held = False
 
         #gravity
         if self.drop_timer >= 1:

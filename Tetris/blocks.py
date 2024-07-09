@@ -1,6 +1,6 @@
 from enum import Enum
 from random import shuffle
-from define import PIECE_LUT, SRS_LUT
+from Tetris.define import PIECE_LUT, SRS_LUT
 from numpy import subtract
 import pygame
 
@@ -119,7 +119,7 @@ class Tetris_Piece:
     
     def hard_drop(self):
         while self.check_move(self.x, self.y + 1, self.current_rotation):
-            self.move_down()
+            self.y += 1
         self.locked = True
 
     #check if move/rotation is possible

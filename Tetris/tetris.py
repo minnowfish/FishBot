@@ -1,6 +1,6 @@
 import sys
 import pygame as pygame
-from game import Game
+from Tetris.game import Game
 
 class Tetris:
     def __init__(self):

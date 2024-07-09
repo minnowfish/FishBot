@@ -1,7 +1,7 @@
 import pygame
 from pygame import Color, Surface
-from blocks import Tetris_Piece, Piece_Color
-from define import PIECE_LUT
+from Tetris.blocks import Tetris_Piece, Piece_Color
+from Tetris.define import PIECE_LUT
 
 
 class Board:
