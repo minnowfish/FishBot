@@ -1,6 +1,6 @@
 from enum import Enum
 from random import shuffle
-from define import PIECE_LUT, SRS_LUT
+from Tetris.define import PIECE_LUT, SRS_LUT
 from numpy import subtract
 import pygame
 
