@@ -9,7 +9,7 @@ class Move:
         self.piece = piece
         self.rotation = rotation
         self.field = field
-        self.changedRotation = rotation
+        self.score = 0
 
     def to_tuple(self):
         return (self.x, self.y, self.piece, self.rotation)
@@ -134,7 +134,7 @@ def expand(field, parent, children):
     x = parent.x
     y = parent.y
     piece = parent.piece
-    rotation = parent.changedRotation
+    rotation = parent.rotation
     rotations = PIECE_LUT[piece]
 
     if check_move(x-1, y, rotation, rotations, field):
@@ -160,8 +160,6 @@ def expand(field, parent, children):
 def generate(field, current_piece):
     result_count = 0
 
-    MAX_GENERATION_POSITION = 128
-
     above_stack = PositionTracker()
     floating = PositionTracker()
 
@@ -183,7 +181,7 @@ def generate(field, current_piece):
         parent = floating.positions[0]
         floating.positions[0] = floating.positions[floating_count - 1]
         floating_count -= 1
-        print("processing:", parent.to_tuple())
+#        print("processing:", parent.to_tuple())
 
         children = []
 
@@ -195,12 +193,11 @@ def generate(field, current_piece):
                 floating.positions[floating_count] = child
                 floating_count += 1
 
-                above_stack_y = hard_drop(child.x, child.y, child.changedRotation, PIECE_LUT[child.piece], field)
+                above_stack_y = hard_drop(child.x, child.y, child.rotation, PIECE_LUT[child.piece], field)
                 child_copy = Move(child.x, above_stack_y, child.piece, child.rotation, None)
-                child_copy.changedRotation = child.changedRotation
 
                 if not above_stack.exist(child_copy):
-                    above_stack_field = get_new_field(child.x, above_stack_y, child.piece, child.changedRotation, PIECE_LUT[child.piece], field)
+                    above_stack_field = get_new_field(child.x, above_stack_y, child.piece, child.rotation, PIECE_LUT[child.piece], field)
                     child_copy.field = above_stack_field
                     above_stack.push(child_copy)
                     above_stack_count += 1
@@ -211,8 +208,7 @@ def generate(field, current_piece):
         if not result_map.exist(above_stack.positions[i]):
             result_map.push(above_stack.positions[i])
             result_count += 1
-            
-
+        
     return result_map.positions
 
 # TESTING
@@ -228,7 +224,7 @@ class Piece:
 
 
 field = [[0 for _ in range(10)] for _ in range(23)]
-current_piece = Piece(6)
+current_piece = Piece(2)
 positions = generate(field, current_piece)
 
 for i in positions:
