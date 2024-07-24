@@ -3,13 +3,14 @@ from numpy import subtract
 from copy import deepcopy
 
 class Move:
-    def __init__(self, x, y, piece, rotation, field):
+    def __init__(self, x, y, piece, rotation, field, moves):
         self.x = x
         self.y = y
         self.piece = piece
         self.rotation = rotation
         self.field = field
         self.score = 0
+        self.moves = moves
 
     def to_tuple(self):
         return (self.x, self.y, self.piece, self.rotation)
@@ -128,7 +129,10 @@ def check_full_line(line):
             return False
     return True
 
-
+def get_copy(moves, new_move):
+    new_moves = moves.copy()
+    new_moves.append(new_move)
+    return new_moves
 
 def expand(field, parent, children):
     x = parent.x
@@ -139,21 +143,21 @@ def expand(field, parent, children):
 
     if check_move(x-1, y, rotation, rotations, field):
 
-        children.append(Move(x-1, y, piece, rotation, None))
+        children.append(Move(x-1, y, piece, rotation, None, get_copy(parent.moves, 'left')))
 
     if check_move(x+1, y, rotation, rotations, field):
-        children.append(Move(x+1, y, piece, rotation, None))
+        children.append(Move(x+1, y, piece, rotation, None, get_copy(parent.moves, 'right')))
 
     if piece != 2: # check if not O piece
         new_x, new_y = rotate_cw(x, y, piece, rotation, rotations, field)
         if new_x != None:
             cw_rotation = (rotation + 1) % 4
-            children.append(Move(new_x, new_y, piece, cw_rotation, None))
+            children.append(Move(new_x, new_y, piece, cw_rotation, None, get_copy(parent.moves, 'cw')))
 
         new_x, new_y = rotate_ccw(x, y, piece, rotation, rotations, field)
         if new_x != None:
             ccw_rotation = (rotation - 1) % 4
-            children.append(Move(new_x, new_y, piece, ccw_rotation, None))
+            children.append(Move(new_x, new_y, piece, ccw_rotation, None, get_copy(parent.moves, 'ccw')))
 
     return children
 
@@ -168,13 +172,13 @@ def generate(field, current_piece):
     rotation = current_piece.current_rotation
     piece_rotations = current_piece.piece_rotations
 
-    initial_move = Move(current_x, current_y, type, rotation, None)
+    initial_move = Move(current_x, current_y, type, rotation, None, [])
     floating.push(initial_move)
     floating_count = 1
 
     drop_y = hard_drop(current_x, current_y, rotation, piece_rotations, field)
     new_field = get_new_field(current_x, drop_y, type, rotation, piece_rotations, field)
-    above_stack.push(Move(current_x, drop_y, type, rotation, new_field))
+    above_stack.push(Move(current_x, drop_y, type, rotation, new_field, ['hard_drop']))
     above_stack_count = 1
 
     while floating_count > 0:
@@ -194,7 +198,7 @@ def generate(field, current_piece):
                 floating_count += 1
 
                 above_stack_y = hard_drop(child.x, child.y, child.rotation, PIECE_LUT[child.piece], field)
-                child_copy = Move(child.x, above_stack_y, child.piece, child.rotation, None)
+                child_copy = Move(child.x, above_stack_y, child.piece, child.rotation, None, get_copy(child.moves, 'hard_drop'))
 
                 if not above_stack.exist(child_copy):
                     above_stack_field = get_new_field(child.x, above_stack_y, child.piece, child.rotation, PIECE_LUT[child.piece], field)
@@ -212,7 +216,7 @@ def generate(field, current_piece):
     return result_map.positions
 
 # TESTING
-class Piece:
+'''class Piece:
     def __init__(self, piece):
         self.x = 5
         self.y = -2
@@ -224,14 +228,14 @@ class Piece:
 
 
 field = [[0 for _ in range(10)] for _ in range(23)]
-current_piece = Piece(2)
+current_piece = Piece(0)
 positions = generate(field, current_piece)
 
 for i in positions:
-    print(i.to_tuple())
+    print(i.moves)
     field = i.field
 
     for row in field:
         print(row)
 
-    print(" ")
+    print(" ")'''
