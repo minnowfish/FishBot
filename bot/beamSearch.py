@@ -2,10 +2,11 @@ from movegen import generate
 from eval import eval
 
 class Node:
-    def __init__(self, field, piece, score):
+    def __init__(self, field, piece, score, moves=None):
         self.field = field
         self.piece = piece
         self.score = score
+        self.initial_moves = moves if moves is not None else []
 
 class Layer:
     def __init__(self):
@@ -38,7 +39,11 @@ def beam_search(initial_field, initial_piece, queue):
         for node in layers[d].nodes:
             next_moves = generate(node.field, node.piece)
             for move in next_moves:
-                new_node = Node(move.field, next_piece, eval(move.field))
+                initial_moves = node.initial_moves.copy()
+                if d == 0:
+                    for m in move.moves:
+                        initial_moves.append(m)
+                new_node = Node(move.field, next_piece, eval(move.field), initial_moves)
                 key = move.normalise()
                 if trans_table.is_better(key, new_node.score):
                     trans_table.add(key, new_node.score)
@@ -49,3 +54,67 @@ def beam_search(initial_field, initial_piece, queue):
 
     best_node = max(layers[DEPTH].nodes, key=lambda n: n.score)
     return best_node
+'''# TESTING
+PIECE_LUT = [
+    [ #I PIECE
+        [(-1,0) , (0,0) , (1,0) , (2,0)],
+        [(0,1) , (0,0) , (0,-1) , (0,-2)],
+        [(1,0) , (0,0) , (-1,0) , (-2,0)],
+        [(0,-1) , (0,0) , (0,1) , (0,2)]
+    ],
+    [ #T PIECE
+        [(-1,0) , (0,0) , (1,0) , (0,1)],
+        [(0,1) , (0,0) , (0,-1) , (1,0)],
+        [(1,0) , (0,0) , (-1,0) , (0,-1)],
+        [(0,-1) , (0,0) , (0,1) , (-1,0)]  
+    ],
+    [#O PIECE
+        [(0,0) , (1,0) , (0,1) , (1,1)],
+        [(0,0) , (0,-1) , (1,0) , (1,-1)],
+        [(0,0) , (-1,0) , (0,-1) , (-1,-1)],
+        [(0,0) , (0,1) , (-1,0) , (-1,1)]
+    ],
+    [#S PIECE
+        [(-1,0) , (0,0) , (0,1) , (1,1)],
+        [(0,1) , (0,0) , (1,0) , (1,-1)],
+        [(1,0) , (0,0) , (0,-1) , (-1,-1)],
+        [(0,-1) , (0,0) , (-1,0) , (-1,1)]
+    ],
+    [#Z PIECE
+        [(-1,1) , (0,1) , (0,0) , (1,0)],
+        [(1,1) , (1,0) , (0,0) , (0,-1)],
+        [(1,-1) , (0,-1) , (0,0) , (-1,0)],
+        [(-1,-1) , (-1,0) , (0,0) , (0,1)]
+    ],
+    [#L PIECE
+        [(-1,0) , (0,0) , (1,0) , (1,1)],
+        [(0,1) , (0,0) , (0,-1) , (1,-1)],
+        [(1,0) , (0,0) , (-1,0) , (-1,-1)],
+        [(0,-1) , (0,0) , (0, 1) , (-1,1)]
+    ],
+    [#J PIECE
+        [(-1,0) , (0,0) , (1,0) , (-1,1)],
+        [(0,1) , (0,0) , (0,-1) , (1,1)],
+        [(1,0) , (0,0) , (-1,0) , (1,-1)],
+        [(0,-1) , (0,0) , (0,1) , (-1,-1)]
+    ]
+]
+
+class Piece:
+    def __init__(self, piece):
+        self.x = 5
+        self.y = -2
+        self.current_rotation = 0 # initial rotation state
+
+        self.piece = piece
+        self.locked = False
+        self.piece_rotations = PIECE_LUT[piece]
+
+field = [[0 for _ in range(10)] for _ in range(23)]
+current_piece = Piece(2)
+queue = [Piece(0), Piece(4), Piece(3)]
+
+
+best_move = beam_search(field, current_piece, queue)
+print(best_move.initial_moves)'''
+
