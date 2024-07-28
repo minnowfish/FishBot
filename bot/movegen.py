@@ -3,7 +3,7 @@ from numpy import subtract
 from copy import deepcopy
 
 class Move:
-    def __init__(self, x, y, piece, rotation, field, moves):
+    def __init__(self, x, y, piece, rotation, field, moves, lines_cleared = None):
         self.x = x
         self.y = y
         self.piece = piece
@@ -11,6 +11,7 @@ class Move:
         self.field = field
         self.score = 0
         self.moves = moves
+        self.lines_cleared = lines_cleared 
 
     def to_tuple(self):
         return (self.x, self.y, self.piece, self.rotation)
@@ -121,7 +122,7 @@ def clear_lines(new_field):
     for i in range(lines_cleared):
         new_field.insert(0, [0 for _ in range(10)])
 
-    return new_field
+    return new_field, lines_cleared
 
 def check_full_line(line):
     for i in line:
@@ -177,8 +178,8 @@ def generate(field, current_piece):
     floating_count = 1
 
     drop_y = hard_drop(current_x, current_y, rotation, piece_rotations, field)
-    new_field = get_new_field(current_x, drop_y, type, rotation, piece_rotations, field)
-    above_stack.push(Move(current_x, drop_y, type, rotation, new_field, ['hard_drop']))
+    new_field, lines_cleared = get_new_field(current_x, drop_y, type, rotation, piece_rotations, field)
+    above_stack.push(Move(current_x, drop_y, type, rotation, new_field, ['hard_drop'], lines_cleared))
     above_stack_count = 1
 
     while floating_count > 0:
@@ -201,8 +202,9 @@ def generate(field, current_piece):
                 child_copy = Move(child.x, above_stack_y, child.piece, child.rotation, None, get_copy(child.moves, 'hard_drop'))
 
                 if not above_stack.exist(child_copy):
-                    above_stack_field = get_new_field(child.x, above_stack_y, child.piece, child.rotation, PIECE_LUT[child.piece], field)
+                    above_stack_field, lines_cleared = get_new_field(child.x, above_stack_y, child.piece, child.rotation, PIECE_LUT[child.piece], field)
                     child_copy.field = above_stack_field
+                    child_copy.lines_cleared = lines_cleared
                     above_stack.push(child_copy)
                     above_stack_count += 1
 
@@ -233,6 +235,7 @@ positions = generate(field, current_piece)
 
 for i in positions:
     print(i.moves)
+    print(i.lines_cleared)
     field = i.field
 
     for row in field:
