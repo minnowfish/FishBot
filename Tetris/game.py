@@ -36,6 +36,9 @@ class Game:
         self.soft_drop = False
         self.piece_held = False
 
+        self.bot_mode = True #toggle bot on/off
+        self.bot_command_queue = []
+
     def draw(self):
         self.board.draw()
         self.board.draw_piece(self.current_piece)
@@ -45,34 +48,38 @@ class Game:
     def update(self, events):
         if self.gameover == True:
             return False
-        for event in events:
-            if event.type == pygame.KEYDOWN:
-                if event.key == Controls.hold:
-                    self.hold()
-                elif event.key == Controls.rotate_cw:
-                    self.rotate_cw()
-                elif event.key == Controls.rotate_ccw:
-                    self.rotate_ccw()
-                elif event.key == Controls.hard_drop:
-                    self.current_piece.hard_drop()
-                elif event.key == Controls.soft_drop:
-                    self.soft_drop = True
-                elif event.key == Controls.move_left:
-                    self.left_pressed_tick = 0
-                    self.left_pressed = True
-                elif event.key == Controls.move_right:
-                    self.right_pressed_tick = 0
-                    self.right_pressed = True
+        
+        if self.bot_mode:
+            self.process_bot_commands()
+        else:
+            for event in events:
+                if event.type == pygame.KEYDOWN:
+                    if event.key == Controls.hold:
+                        self.hold()
+                    elif event.key == Controls.rotate_cw:
+                        self.rotate_cw()
+                    elif event.key == Controls.rotate_ccw:
+                        self.rotate_ccw()
+                    elif event.key == Controls.hard_drop:
+                        self.current_piece.hard_drop()
+                    elif event.key == Controls.soft_drop:
+                        self.soft_drop = True
+                    elif event.key == Controls.move_left:
+                        self.left_pressed_tick = 0
+                        self.left_pressed = True
+                    elif event.key == Controls.move_right:
+                        self.right_pressed_tick = 0
+                        self.right_pressed = True
 
-            if event.type == pygame.KEYUP:
-                if event.key == Controls.move_left:
-                    self.left_pressed = False
-                elif event.key == Controls.move_right:
-                    self.right_pressed = False
-                elif event.key == Controls.soft_drop:
-                    self.soft_drop = False
-
-                #locking
+                if event.type == pygame.KEYUP:
+                    if event.key == Controls.move_left:
+                        self.left_pressed = False
+                    elif event.key == Controls.move_right:
+                        self.right_pressed = False
+                    elif event.key == Controls.soft_drop:
+                        self.soft_drop = False
+        
+        #locking
         if self.current_piece.locked:
             if not self.board.add_piece(self.current_piece, self.queue[0]):
                 self.gameover = True
@@ -142,3 +149,28 @@ class Game:
                 self.current_piece, self.hold_piece = self.hold_piece, self.current_piece
             self.hold_piece.reset()
             self.piece_held = True
+
+#bot management
+    def process_bot_commands(self):
+        while len(self.bot_command_queue) != 0:
+            command = self.bot_command_queue.pop(0)
+            self.handle_bot_command(command)
+
+    def handle_bot_command(self, command):
+        if command == 'hold':
+            self.hold()
+        elif command == 'cw':
+            self.rotate_cw()
+        elif command == 'ccw':
+            self.rotate_ccw()
+        elif command == 'hard_drop':
+            self.current_piece.hard_drop()
+        elif command == 'soft_drop':
+            self.soft_drop = True
+        elif command == 'left':
+            self.current_piece.move_left()
+        elif command == 'right':
+            self.current_piece.move_right()
+
+    def enqueue_bot_command(self, command):
+        self.bot_command_queue.append(command)
