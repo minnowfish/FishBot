@@ -4,5 +4,6 @@ FishBot is a Tetris bot created over the summer holiday as a project. It uses a 
 
 As of the moment, the heuristic considers:
 - Number of line clears
-- Number of cavities/holes on the board
-- Bumpiness of the board
+- Number of cavities/holes in the stack
+- Bumpiness of the stack
+- Height of the stack
