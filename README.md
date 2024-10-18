@@ -7,3 +7,14 @@ As of the moment, the heuristic considers:
 - Number of cavities/holes in the stack
 - Bumpiness of the stack
 - Height of the stack
+
+<!-- GETTING STARTED -->
+## Getting Started
+To run the bot locally, clone the repository.
+Ensure you have python3 installed.
+
+To run the bot:
+  ```sh
+  export PYTHONPATH=/Path-To-FishBot/:$PYTHONPATH
+  python bot/bot.py
+  ```
