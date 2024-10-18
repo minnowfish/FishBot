@@ -42,4 +42,4 @@ def eval(field, lines_cleared):
         case _:
             lines_cleared_cost = 0
 
-    return (bumpiness(field) * -25) + (holes(field) * -175) + (current_height(field) * -15) + lines_cleared_cost
+    return (bumpiness(field) * -25) + (holes(field) * -500) + (current_height(field) * -15) + lines_cleared_cost
