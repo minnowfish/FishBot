@@ -26,7 +26,7 @@ class TranspositionTable:
 
 def beam_search(initial_field, initial_piece, queue, piece_held):
     DEPTH = 3
-    WIDTH = 5
+    WIDTH = 15
 
     layers = [Layer() for _ in range(DEPTH + 1)]
     trans_table = TranspositionTable()
@@ -75,8 +75,8 @@ def beam_search(initial_field, initial_piece, queue, piece_held):
 
     best_node = max(layers[DEPTH].nodes, key=lambda n: n.score)
     return best_node
-'''# TESTING
-PIECE_LUT = [
+# TESTING
+'''PIECE_LUT = [
     [ #I PIECE
         [(-1,0) , (0,0) , (1,0) , (2,0)],
         [(0,1) , (0,0) , (0,-1) , (0,-2)],
@@ -131,11 +131,23 @@ class Piece:
         self.locked = False
         self.piece_rotations = PIECE_LUT[piece]
 
-field = [[0 for _ in range(10)] for _ in range(23)]
-current_piece = Piece(2)
-queue = [Piece(0), Piece(4), Piece(3)]
+field = [
+    [0, 0, 0, 0, 0, 0 ,0 ,0 ,0 ,0],
+    [0, 0, 0, 0, 0, 0 ,0 ,0 ,0 ,0],
+    [0, 0, 0, 0, 0, 0 ,0 ,0 ,0 ,0],
+    [0, 0, 0, 0, 0, 0 ,0 ,0 ,0 ,0],
+    [0, 0, 0, 0, 0, 0 ,0 ,0 ,0 ,0],
+    [0, 0, 0, 0, 0, 0 ,0 ,0 ,0 ,0],
+    [0, 0, 0, 0, 0, 0 ,0 ,0 ,0 ,0],
+    [0, 0, 0, 0, 0, 0 ,0 ,0 ,0 ,0],
+    [0, 0, 1, 1, 1, 0 ,0 ,0 ,0 ,0],
+    [2, 2, 2, 2, 1, 0 ,0 ,0 ,0 ,0],
+]
+current_piece = Piece(3)
+queue = [Piece(5), Piece(2), Piece(1), Piece(3)]
+piece_held = Piece(4)
 
 
-best_move = beam_search(field, current_piece, queue)
+best_move = beam_search(field, current_piece, queue, piece_held)
 print(best_move.initial_moves)'''
 

@@ -24,22 +24,23 @@ def current_height(field):
     for row in range(len(field)):
         for col in field[row]:
             if col != 0:
-                if len(field) - row + 1 >= 17:
-                    return 1
+                height = len(field) - row + 1
+                if height >= 17:
+                    return height - 10
                 return 0 
     return 0
 
 def eval(field, lines_cleared):
     match lines_cleared:
         case 1:
-            lines_cleared_cost = -100
+            lines_cleared_cost = -400
         case 2:
-            lines_cleared_cost = -200
+            lines_cleared_cost = -500
         case 3:
-            lines_cleared_cost = -150
+            lines_cleared_cost = -300
         case 4: 
-            lines_cleared_cost = 400
+            lines_cleared_cost = 500
         case _:
             lines_cleared_cost = 0
 
-    return (bumpiness(field) * -25) + (holes(field) * -175) + (current_height(field) * -15) + lines_cleared_cost
+    return (bumpiness(field) * -25) + (holes(field) * -500) + (current_height(field) * -50) + lines_cleared_cost

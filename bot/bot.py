@@ -13,10 +13,9 @@ while tetris.running != False:
     current_piece = tetris.get_current_piece()
     field = tetris.get_game_state()
     queue = tetris.game.queue
-    piece_held = tetris.game.piece_held
+    piece_held = tetris.game.hold_piece
 
     best_move = beam_search(field, current_piece, queue, piece_held).initial_moves
-    print(best_move)
 
-    for move in best_move:
+    while len(best_move) != 0:
         tetris.game.enqueue_bot_command(best_move.pop(0))
