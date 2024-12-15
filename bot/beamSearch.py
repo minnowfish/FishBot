@@ -18,8 +18,7 @@ class TranspositionTable:
         self.table = {}
 
     def add(self, key, score):
-        if key not in self.table or self.table[key] < score:
-            self.table[key] = score
+        self.table[key] = score
 
     def is_better(self, key, score):
         return key not in self.table or self.table[key] < score
